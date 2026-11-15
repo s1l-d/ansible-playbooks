@@ -1,0 +1,55 @@
+---
+- name: Server Setup Playbook
+  hosts: local
+  become: yes
+  
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      changed_when: false
+    
+    - name: Install essential packages
+      apt:
+        name:
+          - htop
+          - tmux
+          - curl
+          - wget
+          - git
+        state: present
+    
+    - name: Create backup user
+      user:
+        name: backupuser
+        shell: /bin/bash
+        groups: sudo
+        state: present
+    
+    - name: Create backup directory
+      file:
+        path: /var/backups/automated
+        state: directory
+        owner: backupuser
+        group: backupuser
+        mode: '0755'
+    
+    - name: Copy backup script
+      copy:
+        content: |
+          #!/bin/bash
+          echo "Backup started at $(date)" >> /var/log/backup.log
+          tar -czf /var/backups/automated/backup-$(date +%Y%m%d).tar.gz /etc
+          echo "Backup completed" >> /var/log/backup.log
+        dest: /usr/local/bin/backup.sh
+        owner: backupuser
+        group: backupuser
+        mode: '0755'
+    
+    - name: Ensure cron job for backup
+      cron:
+        name: "Daily backup"
+        minute: "0"
+        hour: "2"
+        job: "/usr/local/bin/backup.sh"
+        user: backupuser

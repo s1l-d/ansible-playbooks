@@ -1,0 +1,11 @@
+[webservers]
+web01 ansible_host=192.168.50.245
+
+[dbservers]
+db01 ansible_host=192.168.50.245
+
+[monitoring]
+mon01 ansible_host=192.168.50.245
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3

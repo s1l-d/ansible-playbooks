@@ -1,0 +1,6 @@
+---
+nginx_worker_connections: 512
+nginx_server_name: staging.example.com
+nginx_access_log: /var/log/nginx/staging-access.log
+nginx_error_log: /var/log/nginx/staging-error.log
+nginx_worker_processes: 1

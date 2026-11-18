@@ -1,0 +1,5 @@
+---
+nginx_worker_connections: 2048
+nginx_server_name: prod.example.com
+nginx_access_log: /var/log/nginx/prod-access.log
+nginx_error_log: /var/log/nginx/prod-error.log

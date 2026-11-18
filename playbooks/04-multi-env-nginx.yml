@@ -1,0 +1,30 @@
+---
+- name: Deploy nginx for {{ deploy_env }} environment
+  hosts: all
+  become: yes
+  
+  roles:
+    - nginx
+  
+  tasks:
+    - name: Create environment-specific index page
+      copy:
+        content: |
+          <html>
+          <head><title>{{ deploy_env }} Environment</title></head>
+          <body>
+            <h1>Welcome to {{ deploy_env }}!</h1>
+            <p>Server: {{ inventory_hostname }}</p>
+            <p>Worker connections: {{ nginx_worker_connections }}</p>
+            <p>Deployed by Ansible</p>
+          </body>
+          </html>
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+      when: deploy_env is defined
+    
+    - name: Display deployment info
+      debug:
+        msg: "Deployed to {{ deploy_env }} environment on {{ inventory_hostname }} with {{ nginx_worker_connections }} worker connections"

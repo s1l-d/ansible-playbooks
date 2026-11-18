@@ -4,6 +4,9 @@
     name: nginx
     state: present
   notify: Restart nginx
+  tags:
+    - install
+    - packages
 
 - name: Copy nginx configuration
   template:
@@ -13,9 +16,15 @@
     group: root
     mode: '0644'
   notify: Restart nginx
+  tags:
+    - config
+    - nginx
 
 - name: Ensure nginx is started and enabled
   service:
     name: nginx
     state: started
     enabled: yes
+  tags:
+    - service
+    - nginx

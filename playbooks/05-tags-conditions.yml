@@ -1,0 +1,37 @@
+---
+- name: Flexible deployment with tags and conditions
+  hosts: all
+  become: yes
+
+  roles:
+    - nginx
+
+  tasks:
+    - name: Create index page
+      copy:
+        content: |
+          <html><body><h1>{{ deploy_env | default('unknown') }} environment</h1></body></html>
+        dest: /var/www/html/index.html
+        owner: www-data
+        group: www-data
+        mode: '0644'
+      tags:
+        - content
+        - web
+      when: deploy_env is defined
+
+    - name: Install monitoring tools (only production)
+      apt:
+        name:
+          - htop
+          - iotop
+        state: present
+      tags:
+        - monitoring
+      when: deploy_env == "production"
+
+    - name: Show what was deployed
+      debug:
+        msg: "Environment: {{ deploy_env | default('not set') }}, Host: {{ inventory_hostname }}"
+      tags:
+        - always

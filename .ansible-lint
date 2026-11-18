@@ -1,0 +1,5 @@
+exclude_paths:
+  - vault/
+skip_list:
+  - fqcn[action]
+  - fqcn[action-core]
